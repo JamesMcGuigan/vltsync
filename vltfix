@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# awksvnfile is a safety catch, filters out all files not in svn
+# vltfix .context has a major bug - it deletes everything
+# vltfix /dir/ doesn't get moved propertly
+for file in `echo "$@" | awksvn`; do 
+    echo "--------------------------------------------------"
+    echo "START: vltfix $file"          
+    echo "--------------------------------------------------"
+    mv -v    $file $file.`date '+%F-%H%M'`.vltfix.bak && (
+    vltrmci  $file --force
+    vlt up   $file --force
+    mv -v    $file $file.`date '+%F-%H%M'`.vltfix.bak2
+    vltrmci  $file --force
+    vlt up   $file --force
+    vltrmci  $file --force
+
+    svn up   $file --force
+    vltaddci $file --force
+    echo "--------------------------------------------------"
+    echo "END: vltfix $file"          
+    echo "--------------------------------------------------"
+    ) || ( 
+    echo "--------------------------------------------------"
+    echo "END: vltfix - INVALID FILE: $file"          
+    echo "--------------------------------------------------"
+    )
+done;

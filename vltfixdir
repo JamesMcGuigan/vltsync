@@ -1,0 +1,22 @@
+#!/bin/bash -x
+
+# awksvnfile is a safety catch, filters out all dirs not in svn
+for dir in `echo "$@"`; do # | awksvndir`; do
+    echo "--------------------------------------------------"
+    echo "START: vltfixdir $dir"          
+    echo "--------------------------------------------------"
+    mv -v   $dir $dir.`date '+%F-%H%M'`.vltfix.bak
+    rm -Rvf $dir
+    vltrmci $dir
+    vlt up  $dir
+    rm -Rvf $dir
+    vltrmci $dir
+    vlt up  $dir
+    vltrmci $dir
+
+    svn up   $dir
+    vltaddci $dir
+    echo "--------------------------------------------------"
+    echo "END: vltfixdir $dir"
+    echo "--------------------------------------------------"
+done;

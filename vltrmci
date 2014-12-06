@@ -1,0 +1,3 @@
+#!/bin/sh
+/usr/local/bin/vlt rm "$@" &&
+/usr/local/bin/vlt ci "$@"

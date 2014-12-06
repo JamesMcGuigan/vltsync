@@ -1,0 +1,12 @@
+#!/bin/bash
+## Format vlt output to look like unix svn output, relative to current working directory
+
+# /jcr_root/$ vlt ci  - needs a star or it chokes on /jcr_root/.content.xml
+isjcr=`pwd -P`
+args="$@"
+if [[ ${isjcr/[a-z]*\//} == '/jcr_root' && ( $@ == "ci" || $@ == "up" || $@ == "diff" || $@ == "st" ) && $# -le 1 ]]; then args="$@ apps etc "; fi;
+
+vlt=`/usr/bin/which -a vlt | grep -v $0 | head -n1` # find the other vlt further down path
+#vlt="/cygdrive/c/Tools/vault-cli-2.3.6/bin/vlt"
+pwd="`pwd -P | perl -p -e 's{/cygdrive/(\w)/}{\u$1:/}; $_.="/"; s{/}{\\\\\\\\}g; s/\n//; s/ /\s+/;';`";
+"$vlt" $args | perl -p -e 's!(\b[A-Z]:)?'"$pwd"'!!g; s{\\}{/}g;' 

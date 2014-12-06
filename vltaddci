@@ -1,0 +1,2 @@
+#!/bin/sh
+vlt add "$@" && vlt ci "$@"
